@@ -10,5 +10,8 @@ class AppColors {
   static var buttonColor = const Color(0xFFFF3B30);
   static var textColor = const Color(0xFFFFFFFF);
   static var secondTextColor = const Color(0xFFC7C7CC);
+  static var thirdTextColor = const Color(0xFF858585);
   static var secondBgColor = const Color(0xFFFcFcFc);
 }
+
+const CreditType = ["Vehicle", "Personal", "Home"];

@@ -14,23 +14,15 @@ class _MainWidgetState extends State<MainWidget> {
     return Scaffold(
       backgroundColor: AppColors.secondBgColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        shadowColor: null,
-        elevation: 0.4,
-        toolbarHeight: 80,
-        leadingWidth: 250,
-        leading: const Center(
-          child: Text(
-            "Credit calculator",
+        centerTitle: false,
+        title: const Text("Credit calculator",
             style: TextStyle(
-              color: Colors.black,
-              fontSize: 25,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+            )),
         actions: [
           InkWell(
+            onTap: () {},
             child: Image.asset(
               "assets/img/Settings.png",
               width: 30,
@@ -72,7 +64,9 @@ class _MainWidgetState extends State<MainWidget> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pushNamed("/add");
+              },
               child: Container(
                 height: 70,
                 decoration: BoxDecoration(

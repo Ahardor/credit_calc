@@ -30,13 +30,17 @@ class _StartWidgetState extends State<StartWidget> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            height: 600,
+            constraints: const BoxConstraints(maxHeight: 600),
             color: Colors.white,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Image.asset(
-                "assets/img/Start$currentIndex.png",
-                // height: 600,
+            width: double.infinity,
+            child: AspectRatio(
+              aspectRatio: 0.87,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Image.asset(
+                  "assets/img/Start$currentIndex.png",
+                  // height: 600,
+                ),
               ),
             ),
           ),

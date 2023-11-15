@@ -1,3 +1,4 @@
+import 'package:credit_calc/add_credit.dart';
 import 'package:credit_calc/home.dart';
 import 'package:credit_calc/parameters.dart';
 import 'package:credit_calc/start.dart';
@@ -28,8 +29,56 @@ class MainApp extends StatelessWidget {
         "/terms": (context) => const TermsWidget(),
         "/policy": (context) => const PolicyWidget(),
         "/main": (context) => const MainWidget(),
+        "/add": (context) => const AddEditCredit(),
       },
-      theme: ThemeData(fontFamily: "Satoshi"),
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: AppColors.buttonColor,
+          elevation: 0.4,
+          toolbarHeight: 80,
+          centerTitle: true,
+          shadowColor: null,
+          titleTextStyle: const TextStyle(
+            color: Colors.black,
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        fontFamily: "Satoshi",
+        inputDecorationTheme: InputDecorationTheme(
+          contentPadding:
+              const EdgeInsets.only(left: 10, right: 10, top: 22, bottom: 22),
+          labelStyle: TextStyle(
+            color: AppColors.thirdTextColor,
+            fontSize: 13,
+            fontWeight: FontWeight.w400,
+          ),
+          hintStyle: TextStyle(
+            color: AppColors.thirdTextColor,
+            fontSize: 13,
+            fontWeight: FontWeight.w400,
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: AppColors.secondTextColor,
+            ),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: AppColors.buttonColor,
+            ),
+          ),
+          prefixStyle: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
+          suffixStyle: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
       // home: const Scaffold(
       //   body: Center(
       //     child: Text('Hello World!'),
