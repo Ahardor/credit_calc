@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:credit_calc/credit_card.dart';
 import 'package:credit_calc/parameters.dart';
 import 'package:flutter/material.dart';
 
@@ -9,8 +12,25 @@ class MainWidget extends StatefulWidget {
 }
 
 class _MainWidgetState extends State<MainWidget> {
+  var credits = [];
+
+  void updateList() {
+    setState(() {
+      credits = [
+        for (var i in prefs.getStringList("credits") ?? []) jsonDecode(i)
+      ];
+    });
+  }
+
+  @override
+  void initState() {
+    updateHomeList = updateList;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    updateList();
     return Scaffold(
       backgroundColor: AppColors.secondBgColor,
       appBar: AppBar(
@@ -35,32 +55,42 @@ class _MainWidgetState extends State<MainWidget> {
       ),
       body: Padding(
         padding:
-            const EdgeInsets.only(left: 40, right: 40, top: 40, bottom: 40),
+            const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "It's empty",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    'Add information about your mortgage by clicking the '
-                    '"Add credit info" button',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: AppColors.secondTextColor,
-                    ),
-                  ),
-                ],
+                mainAxisAlignment: credits.isEmpty
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.start,
+                children: credits.isEmpty
+                    ? <Widget>[
+                        const Text(
+                          "It's empty",
+                          style: TextStyle(
+                              fontSize: 25, fontWeight: FontWeight.w800),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          'Add information about your mortgage by clicking the '
+                          '"Add credit info" button',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: AppColors.secondTextColor,
+                          ),
+                        ),
+                      ]
+                    : [
+                        for (var i = 0; i < credits.length; i++)
+                          CreditCard(
+                            index: i,
+                          ),
+                      ],
               ),
             ),
             InkWell(
