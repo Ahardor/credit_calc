@@ -40,13 +40,22 @@ class _CreditInfoState extends State<CreditInfo> {
 
   late Credit credit;
 
+  // При использовании StatefullWidget
+  // получение аргументов из предыдущего экрана
+  // должно осуществляться в didChangeDependencies
+  // во избежание зацикливания
   @override
-  Widget build(BuildContext context) {
+  void didChangeDependencies() {
     credit = (ModalRoute.of(context)!.settings.arguments
         as Map<String, dynamic>)["credit"];
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     paid = 0;
     for (var i in credit.history) {
-      paid += i.amount;
+      paid += i.amount; // Расчёт суммы платежей
     }
 
     return Scaffold(

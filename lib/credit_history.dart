@@ -19,17 +19,25 @@ class _CreditHistoryState extends State<CreditHistory> {
 
   late Function(Payment pay) addPaymentParent;
 
+  // При использовании StatefullWidget
+  // получение аргументов из предыдущего экрана
+  // должно осуществляться в didChangeDependencies
+  // во избежание зацикливания
   @override
-  Widget build(BuildContext context) {
+  void didChangeDependencies() {
     credit = (ModalRoute.of(context)!.settings.arguments
         as Map<String, dynamic>)["credit"];
-
     addPaymentParent = (ModalRoute.of(context)!.settings.arguments
         as Map<String, dynamic>)["fun"];
+    super.didChangeDependencies();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     var list = <Widget>[];
 
     for (var i = 0; i < credit.history.length; i++) {
+      // Вывод истории платежей
       list.add(
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -94,7 +102,7 @@ class _CreditHistoryState extends State<CreditHistory> {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          children: credit.history.isEmpty
+          children: credit.history.isEmpty // Если история пустая
               ? <Widget>[
                   const Spacer(),
                   const Text(
@@ -143,6 +151,7 @@ class _CreditHistoryState extends State<CreditHistory> {
                   )
                 ]
               : [
+                  // Если история не пустая
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,

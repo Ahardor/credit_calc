@@ -13,6 +13,7 @@ class _AddCreditState extends State<AddCredit> {
   int selectedType = 1;
 
   Credit credit = Credit(
+    // Создание кредита
     creditAmount: 0,
     interestRate: 0,
     creditPeriod: 0,
@@ -28,6 +29,7 @@ class _AddCreditState extends State<AddCredit> {
   var dateController = TextEditingController();
 
   var fields = [
+    // Поля кредита
     "Credit amount",
     "Interest rate",
     "Credit period",
@@ -37,6 +39,7 @@ class _AddCreditState extends State<AddCredit> {
   ];
 
   var suffixes = {
+    // Суффиксы
     "Interest rate": "%",
     "Credit period": "months",
     "Credit amount": r"$",
@@ -45,6 +48,7 @@ class _AddCreditState extends State<AddCredit> {
   };
 
   var outputs = [
+    // Расчеты
     "Total payments",
     "Monthly payments",
     "Full cost of credit",
@@ -53,7 +57,7 @@ class _AddCreditState extends State<AddCredit> {
 
   @override
   void initState() {
-    dateController.text = formatDate(DateTime.now());
+    dateController.text = formatDate(DateTime.now()); // Текущая дата
     credit.date = dateController.text;
     super.initState();
   }
@@ -69,13 +73,14 @@ class _AddCreditState extends State<AddCredit> {
             child: Center(
               child: InkWell(
                 onTap: () {
+                  // Сохранение кредита в памяти
                   var currentCredits = prefs.getStringList("credits") ?? [];
 
                   currentCredits.add(credit.toString());
 
                   prefs.setStringList("credits", currentCredits);
-                  updateHomeList();
-                  Navigator.of(context).pop();
+                  updateHomeList(); // Обновление списка кредитов
+                  Navigator.of(context).pop(); // Закрытие экрана
                 },
                 child: Text(
                   "Save",
@@ -112,6 +117,7 @@ class _AddCreditState extends State<AddCredit> {
                               3,
                               (index) => InkWell(
                                 onTap: () {
+                                  // Выбор типа кредита
                                   setState(() {
                                     selectedType = index;
                                     credit.type = index;
@@ -172,7 +178,7 @@ class _AddCreditState extends State<AddCredit> {
                             ],
                       ),
                     ),
-                    for (var i in fields)
+                    for (var i in fields) // Поля ввода данных кредита
                       Container(
                         margin: const EdgeInsets.only(top: 20),
                         color: Colors.white,
@@ -206,7 +212,7 @@ class _AddCreditState extends State<AddCredit> {
                               }
                             });
 
-                            credit.countPayments();
+                            credit.countPayments(); // Рассчет платежей
                           },
                           keyboardType: TextInputType.number,
                           readOnly: i == "Date",
@@ -244,6 +250,7 @@ class _AddCreditState extends State<AddCredit> {
                                 : Colors.black,
                           ),
                           inputFormatters: [
+                            // Формат ввода чисел
                             FilteringTextInputFormatter.allow(
                                 RegExp(r'(^\d*\.?\d*)')),
                           ],

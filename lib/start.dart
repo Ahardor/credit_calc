@@ -10,12 +10,15 @@ class StartWidget extends StatefulWidget {
 
 class _StartWidgetState extends State<StartWidget> {
   int currentIndex = 1;
+
+  // Массив заголовков
   final heads = [
     "Calculate Your Credit",
     "We value your feedback",
     "Compare Loan Options"
   ];
 
+  // Массив описаний
   final desc = [
     "Input your credit amount, interest rate, and loan term to instantly calculate your monthly payments. This is a valuable tool for managing your finances.",
     "Every day we are getting better due to your ratings and reviews — that helps us protect your accounts.",
@@ -38,7 +41,7 @@ class _StartWidgetState extends State<StartWidget> {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Image.asset(
-                  "assets/img/Start$currentIndex.png",
+                  "assets/img/Start$currentIndex.png", // Изображение в зависимости от текущего экрана
                   // height: 600,
                 ),
               ),
@@ -82,10 +85,11 @@ class _StartWidgetState extends State<StartWidget> {
                     onTap: () {
                       setState(() {
                         if (currentIndex < 3) {
-                          currentIndex++;
+                          currentIndex++; // Переход к следующему экрану
                         } else {
                           prefs.setBool("start", true);
-                          Navigator.of(context).pushReplacementNamed("/main");
+                          Navigator.of(context).pushReplacementNamed(
+                              "/main"); // Переход на главную страницу
                         }
                       });
                     },
@@ -155,7 +159,8 @@ class _StartWidgetState extends State<StartWidget> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     InkWell(
-                      onTap: () => Navigator.of(context).pushNamed("/terms"),
+                      onTap: () => Navigator.of(context).pushNamed(
+                          "/terms"), // Переход на страницу пользовательского соглашения
                       child: Text(
                         "Terms of Use",
                         style: TextStyle(
@@ -171,7 +176,8 @@ class _StartWidgetState extends State<StartWidget> {
                       margin: const EdgeInsets.symmetric(horizontal: 30),
                     ),
                     InkWell(
-                      onTap: () => Navigator.of(context).pushNamed("/policy"),
+                      onTap: () => Navigator.of(context).pushNamed(
+                          "/policy"), // Переход на страницу политики конфиденциальности
                       child: Text(
                         "Privacy Policy",
                         style: TextStyle(

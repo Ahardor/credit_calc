@@ -40,12 +40,17 @@ class _EditCreditState extends State<EditCredit> {
 
   late Function(Credit) updateInfo;
 
+  // При использовании StatefullWidget
+  // получение аргументов из предыдущего экрана
+  // должно осуществляться в didChangeDependencies
+  // во избежание зацикливания
   @override
   void didChangeDependencies() {
     credit = (ModalRoute.of(context)!.settings.arguments
-        as Map<String, dynamic>)["credit"];
+        as Map<String, dynamic>)["credit"]; // Получение данных кредита
 
-    fields["Credit amount"]!.text = credit.creditAmount.toString();
+    fields["Credit amount"]!.text =
+        credit.creditAmount.toString(); // Заполнение
     fields["Interest rate"]!.text = credit.interestRate.toString();
     fields["Credit period"]!.text = credit.creditPeriod.toString();
     fields["Date"]!.text = credit.date;
@@ -53,9 +58,9 @@ class _EditCreditState extends State<EditCredit> {
     fields["Deposit cost"]!.text = credit.depositCost.toString();
 
     updateInfo = (ModalRoute.of(context)!.settings.arguments
-        as Map<String, dynamic>)["fun"];
+        as Map<String, dynamic>)["fun"]; // Получение функции обновления
 
-    selectedType = credit.type;
+    selectedType = credit.type; // Выбор типа кредита
     super.didChangeDependencies();
   }
 
@@ -70,11 +75,11 @@ class _EditCreditState extends State<EditCredit> {
             child: Center(
               child: InkWell(
                 onTap: () {
-                  credit.history = [];
-                  credit.save();
-                  updateInfo(credit);
-                  updateHomeList();
-                  Navigator.of(context).pop();
+                  credit.history = []; // Очистка истории
+                  credit.save(); // Сохранение
+                  updateInfo(credit); // Обновление
+                  updateHomeList(); // Обновление списка кредитов в главном экране
+                  Navigator.of(context).pop(); // Закрытие экрана
                 },
                 child: Text(
                   "Save",

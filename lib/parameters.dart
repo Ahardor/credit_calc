@@ -1,15 +1,14 @@
 library parameters;
 
-import 'dart:convert';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-late final SharedPreferences prefs;
+late final SharedPreferences prefs; // Локальный хранилище
 
 class AppColors {
+  // Цвета используемые в приложении
   static var darkColor = const Color(0xFF1C1C1E);
   static var buttonColor = const Color(0xFFFF3B30);
   static var buttonSecondColor = const Color(0xFFFBF4F4);
@@ -21,23 +20,28 @@ class AppColors {
   static var accentColor = const Color(0xFF34C759);
 }
 
-Function updateHomeList = () {};
+Function updateHomeList =
+    () {}; // Глобальная функция обновления списка кредитов
 
-const CreditType = ["Vehicle", "Personal", "Home"];
+const CreditType = ["Vehicle", "Personal", "Home"]; // Типы кредитов
 
 String formatDate(DateTime dt) {
+  // Форматирование даты
   return DateFormat("dd.MM.yyyy").format(dt);
 }
 
 String formatDateTime(DateTime dt) {
+  // Форматирование даты и времени
   return DateFormat("dd.MM.yyyy HH:mm").format(dt);
 }
 
 DateTime dateFromString(String s) {
+  // Преобразование строки в дату
   return DateFormat("dd.MM.yyyy").parse(s);
 }
 
 class Credit {
+  // Кредит
   Credit({
     required this.creditAmount,
     required this.interestRate,
@@ -49,10 +53,11 @@ class Credit {
     required this.date,
     required this.index,
   }) {
-    countPayments();
+    countPayments(); // Подсчет платежей
   }
 
   Credit.fromJson({
+    // Конструктор кредита из JSON
     required Map<String, dynamic> json,
     required this.index,
   }) {
@@ -65,28 +70,33 @@ class Credit {
     date = json["date"];
     history = [for (var i in json["history"]) Payment.fromJson(json: i)];
 
-    countPayments();
+    countPayments(); // Подсчет платежей
   }
 
   void save() {
-    var i = prefs.getStringList("credits")!;
-    i[index] = toString();
-    prefs.setStringList("credits", i);
+    // Функция сохранения кредита
+    var i = prefs.getStringList("credits")!; // Сохранение кредита
+    i[index] = toString(); // Запись
+    prefs.setStringList("credits", i); // Сохранение в Shared Preferences
 
-    updateHomeList();
+    updateHomeList(); // Обновление списка
   }
 
   void countPayments() {
-    var monthlyRate = (interestRate / 100) / 12;
+    // Функция подсчета платежей
+    var monthlyRate = (interestRate / 100) / 12; // Процентная ставка в месяц
 
     monthlyPayment = interestRate == 0
         ? creditAmount / creditPeriod
         : creditAmount *
             (monthlyRate +
-                monthlyRate / (pow((1 + monthlyRate), creditPeriod) - 1));
-    totalPayment = monthlyPayment * creditPeriod;
-    fullCost = totalPayment + notaryServices + depositCost;
-    overpayment = totalPayment - creditAmount;
+                monthlyRate /
+                    (pow((1 + monthlyRate), creditPeriod) -
+                        1)); // Ежемесячный платеж
+    totalPayment = monthlyPayment * creditPeriod; // Общая сумма платежей
+    fullCost =
+        totalPayment + notaryServices + depositCost; // Общая стоимость кредита
+    overpayment = totalPayment - creditAmount; // Переплата
   }
 
   late int type;
@@ -106,6 +116,7 @@ class Credit {
   late double fullCost;
   late double overpayment;
 
+  // Функция преобразования кредита в строку
   @override
   String toString() {
     return '{"type": $type, "interestRate": $interestRate, "date": "$date", "creditAmount": $creditAmount, "creditPeriod": $creditPeriod, "notaryServices": $notaryServices, "depositCost": $depositCost, "history": $history}';
@@ -113,12 +124,14 @@ class Credit {
 }
 
 class Payment {
+  // Платеж
   Payment({
     this.amount = 0,
     this.date = "",
   });
 
   Payment.fromJson({
+    // Конструктор платежа из JSON
     required Map<String, dynamic> json,
   }) {
     amount = json["amount"];
@@ -128,6 +141,7 @@ class Payment {
   late double amount;
   late String date;
 
+  // Функция преобразования платежа в строку
   @override
   String toString() {
     return '{"amount": $amount, "date": "$date"}';

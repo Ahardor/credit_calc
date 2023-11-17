@@ -8,6 +8,10 @@ class CreditSchedule extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // При использовании StatelessWidget возможно
+    // получение параметров из предыдущего экрана
+    // в функции build
+
     credit = (ModalRoute.of(context)!.settings.arguments
         as Map<String, dynamic>)["credit"];
     var debt = credit.fullCost;
@@ -66,8 +70,9 @@ class CreditSchedule extends StatelessWidget {
               for (var i = 0; i < credit.creditPeriod; i++)
                 Container(
                   padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  color:
-                      i % 2 == 0 ? Colors.white : AppColors.buttonSecondColor,
+                  color: i % 2 == 0
+                      ? Colors.white
+                      : AppColors.buttonSecondColor, // Чередование цветов
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -80,7 +85,7 @@ class CreditSchedule extends StatelessWidget {
                                 dateFromString(credit.date).year,
                                 dateFromString(credit.date).month + i,
                                 dateFromString(credit.date).day,
-                              ),
+                              ), // Вывод даты следующего платежа
                             ),
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
@@ -93,7 +98,8 @@ class CreditSchedule extends StatelessWidget {
                         margin: const EdgeInsets.only(left: 30),
                         child: Center(
                           child: Text(
-                            credit.monthlyPayment.toStringAsFixed(2),
+                            credit.monthlyPayment
+                                .toStringAsFixed(2), // Вывод платежа
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                             ),
@@ -105,7 +111,7 @@ class CreditSchedule extends StatelessWidget {
                         margin: const EdgeInsets.only(right: 10),
                         child: Text(
                           (credit.fullCost - credit.monthlyPayment * (i + 1))
-                              .toStringAsFixed(2),
+                              .toStringAsFixed(2), // Вывод долга после платежа
                           textAlign: TextAlign.end,
                           style: const TextStyle(
                             fontWeight: FontWeight.w500,

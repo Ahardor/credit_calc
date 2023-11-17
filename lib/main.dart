@@ -14,10 +14,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  prefs = await SharedPreferences.getInstance();
+  prefs = await SharedPreferences
+      .getInstance(); // Инициализация локального хранилища
   // prefs.clear();
 
-  runApp(const MainApp());
+  runApp(const MainApp()); // Запуск приложения
 }
 
 class MainApp extends StatelessWidget {
@@ -25,24 +26,35 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var startWatched = prefs.getBool("start");
+    var startWatched =
+        prefs.getBool("start"); // Проверка просмотра стартового экрана
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: startWatched == null || !startWatched ? "/start" : "/main",
+      initialRoute: startWatched == null || !startWatched
+          ? "/start"
+          : "/main", // Начальная страница
+      // Маршруты экранов
       routes: {
-        "/start": (context) => const StartWidget(),
-        "/terms": (context) => const TermsWidget(),
-        "/policy": (context) => const PolicyWidget(),
-        "/main": (context) => const MainWidget(),
-        "/add": (context) => const AddCredit(),
-        "/info": (context) => const CreditInfo(),
-        "/addPayment": (context) => AddPayment(),
-        "/schedule": (context) => CreditSchedule(),
-        "/history": (context) => const CreditHistory(),
-        "/editCredit": (context) => const EditCredit(),
-        "/settings": (context) => const Settings(),
+        "/start": (context) => const StartWidget(), // Стартовая страница
+        "/terms": (context) =>
+            const TermsWidget(), // Страница с пользовательским соглашением
+        "/policy": (context) =>
+            const PolicyWidget(), // Страница с политикой конфиденциальности
+        "/main": (context) => const HomeWidget(), // Главная страница
+        "/add": (context) => const AddCredit(), // Страница добавления кредита
+        "/info": (context) =>
+            const CreditInfo(), // Страница информации о кредите
+        "/addPayment": (context) => AddPayment(), // Страница добавления платежа
+        "/schedule": (context) =>
+            CreditSchedule(), // Страница графика платежей
+        "/history": (context) =>
+            const CreditHistory(), // Страница истории платежей
+        "/editCredit": (context) =>
+            const EditCredit(), // Страница редактирования кредита
+        "/settings": (context) => const Settings(), // Страница настроек
       },
+      // Глобальные настройки дизайна приложения
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.white,
@@ -91,11 +103,6 @@ class MainApp extends StatelessWidget {
           ),
         ),
       ),
-      // home: const Scaffold(
-      //   body: Center(
-      //     child: Text('Hello World!'),
-      //   ),
-      // ),
     );
   }
 }

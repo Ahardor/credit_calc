@@ -9,6 +9,10 @@ class AddPayment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Функция добавления платежа в кредит
+    // При использовании StattelessWidget возможно
+    // получение параметров из предыдущего экрана
+    // в функции build
     Function(Payment pay) addPayment = (ModalRoute.of(context)!
         .settings
         .arguments as Map<String, dynamic>)["fun"];
@@ -48,6 +52,7 @@ class AddPayment extends StatelessWidget {
             InkWell(
               onTap: () {
                 if (amountCtrl.text == "") {
+                  // Если поле пустое
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text(
                       "Enter amount",
@@ -55,13 +60,14 @@ class AddPayment extends StatelessWidget {
                   ));
                 } else {
                   var pay = Payment(
+                    // Создание платежа
                     amount: double.parse(amountCtrl.text),
                     date: formatDateTime(DateTime.now()),
                   );
 
-                  addPayment(pay);
+                  addPayment(pay); // Добавление платежа
 
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // Закрытие экрана
                 }
               },
               child: Container(

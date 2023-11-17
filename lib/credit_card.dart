@@ -15,7 +15,7 @@ class CreditCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     for (var i in credit.history) {
-      paid += i.amount;
+      paid += i.amount; // Расчёт суммы платежей
     }
 
     return Padding(

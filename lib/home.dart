@@ -4,23 +4,20 @@ import 'package:credit_calc/credit_card.dart';
 import 'package:credit_calc/parameters.dart';
 import 'package:flutter/material.dart';
 
-class MainWidget extends StatefulWidget {
-  const MainWidget({super.key});
+class HomeWidget extends StatefulWidget {
+  // Главная страница
+  const HomeWidget({super.key});
 
   @override
-  State<MainWidget> createState() => _MainWidgetState();
+  State<HomeWidget> createState() => _HomeWidgetState();
 }
 
-class _MainWidgetState extends State<MainWidget> {
+class _HomeWidgetState extends State<HomeWidget> {
   var credits = <Credit>[];
 
   void updateList() {
     setState(() {
-      // if (prefs.getStringList("credits") != null) {
-      //   for (var i = 0; i < prefs.getStringList("credits")!.length; i++) {
-      //     print(jsonDecode((prefs.getStringList("credits") ?? [])[i]));
-      //   }
-      // }
+      // Загрузка списка кредитов
       credits = [
         for (var i = 0; i < (prefs.getStringList("credits") ?? []).length; i++)
           Credit.fromJson(
@@ -32,7 +29,7 @@ class _MainWidgetState extends State<MainWidget> {
 
   @override
   void initState() {
-    updateHomeList = updateList;
+    updateHomeList = updateList; // Создание глобальной функции для обновления
     updateList();
     super.initState();
   }
@@ -49,6 +46,7 @@ class _MainWidgetState extends State<MainWidget> {
               fontWeight: FontWeight.w800,
             )),
         actions: [
+          // Иконка настроек
           InkWell(
             onTap: () {
               Navigator.of(context).pushNamed("/settings");
@@ -75,7 +73,7 @@ class _MainWidgetState extends State<MainWidget> {
                 mainAxisAlignment: credits.isEmpty
                     ? MainAxisAlignment.center
                     : MainAxisAlignment.start,
-                children: credits.isEmpty
+                children: credits.isEmpty // Если нет кредитов
                     ? <Widget>[
                         const Text(
                           "It's empty",
@@ -96,8 +94,7 @@ class _MainWidgetState extends State<MainWidget> {
                         ),
                       ]
                     : [
-                        // for (var i = 0; i < credits.length; i++)
-                        //   Text(jsonEncode(credits[i])),
+                        // Если есть кредиты
                         for (var i = 0; i < credits.length; i++)
                           CreditCard(
                             credit: credits[i],
@@ -107,7 +104,8 @@ class _MainWidgetState extends State<MainWidget> {
             ),
             InkWell(
               onTap: () {
-                Navigator.of(context).pushNamed("/add");
+                Navigator.of(context)
+                    .pushNamed("/add"); // Переход на страницу добавления
               },
               child: Container(
                 height: 70,

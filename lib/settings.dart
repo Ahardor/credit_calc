@@ -21,7 +21,7 @@ class Settings extends StatelessWidget {
         child: Column(
           children: [
             InkWell(
-              onTap: () {},
+              onTap: () {}, // TODO
               child: Row(
                 children: [
                   Image.asset(
@@ -46,7 +46,8 @@ class Settings extends StatelessWidget {
               height: 20,
             ),
             InkWell(
-              onTap: () => Navigator.of(context).pushNamed("/policy"),
+              onTap: () => Navigator.of(context)
+                  .pushNamed("/policy"), // Политика конфиденциальности
               child: Row(
                 children: [
                   Image.asset(
@@ -71,7 +72,8 @@ class Settings extends StatelessWidget {
               height: 20,
             ),
             InkWell(
-              onTap: () => Navigator.of(context).pushNamed("/terms"),
+              onTap: () => Navigator.of(context)
+                  .pushNamed("/terms"), // Пользовательское соглашение
               child: Row(
                 children: [
                   Image.asset(
@@ -96,7 +98,7 @@ class Settings extends StatelessWidget {
               height: 20,
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {}, // TODO
               child: Row(
                 children: [
                   Image.asset(
@@ -121,7 +123,7 @@ class Settings extends StatelessWidget {
               height: 20,
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {}, // TODO
               child: Row(
                 children: [
                   Image.asset(
