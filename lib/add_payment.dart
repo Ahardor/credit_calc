@@ -51,7 +51,8 @@ class AddPayment extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                if (amountCtrl.text == "") {
+                if (amountCtrl.text == "" ||
+                    double.parse(amountCtrl.text) == 0) {
                   // Если поле пустое
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text(
