@@ -1,5 +1,6 @@
 library parameters;
 
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ late final SharedPreferences prefs;
 class AppColors {
   static var darkColor = const Color(0xFF1C1C1E);
   static var buttonColor = const Color(0xFFFF3B30);
+  static var buttonSecondColor = const Color(0xFFFBF4F4);
   static var textColor = const Color(0xFFFFFFFF);
   static var mainTextColor = const Color(0xFFDEDEDE);
   static var secondTextColor = const Color(0xFFC7C7CC);
@@ -27,6 +29,14 @@ String formatDate(DateTime dt) {
   return DateFormat("dd.MM.yyyy").format(dt);
 }
 
+String formatDateTime(DateTime dt) {
+  return DateFormat("dd.MM.yyyy HH:mm").format(dt);
+}
+
+DateTime dateFromString(String s) {
+  return DateFormat("dd.MM.yyyy").parse(s);
+}
+
 class Credit {
   Credit({
     required this.creditAmount,
@@ -37,12 +47,14 @@ class Credit {
     this.history = const [],
     required this.type,
     required this.date,
+    required this.index,
   }) {
     countPayments();
   }
 
   Credit.fromJson({
     required Map<String, dynamic> json,
+    required this.index,
   }) {
     creditAmount = json["creditAmount"];
     interestRate = json["interestRate"];
@@ -54,6 +66,14 @@ class Credit {
     history = [for (var i in json["history"]) Payment.fromJson(json: i)];
 
     countPayments();
+  }
+
+  void save() {
+    var i = prefs.getStringList("credits")!;
+    i[index] = toString();
+    prefs.setStringList("credits", i);
+
+    updateHomeList();
   }
 
   void countPayments() {
@@ -76,6 +96,8 @@ class Credit {
   late double notaryServices;
   late double depositCost;
   late String date;
+
+  int index;
 
   late List<Payment> history;
 
@@ -108,6 +130,6 @@ class Payment {
 
   @override
   String toString() {
-    return '"amount": $amount, "date": $date';
+    return '{"amount": $amount, "date": "$date"}';
   }
 }

@@ -1,8 +1,12 @@
 import 'package:credit_calc/add_credit.dart';
 import 'package:credit_calc/add_payment.dart';
+import 'package:credit_calc/credit_history.dart';
 import 'package:credit_calc/credit_info.dart';
+import 'package:credit_calc/credit_schedule.dart';
+import 'package:credit_calc/edit_credit.dart';
 import 'package:credit_calc/home.dart';
 import 'package:credit_calc/parameters.dart';
+import 'package:credit_calc/settings.dart';
 import 'package:credit_calc/start.dart';
 import 'package:credit_calc/terms.dart';
 import 'package:flutter/material.dart';
@@ -31,9 +35,13 @@ class MainApp extends StatelessWidget {
         "/terms": (context) => const TermsWidget(),
         "/policy": (context) => const PolicyWidget(),
         "/main": (context) => const MainWidget(),
-        "/add": (context) => const AddEditCredit(),
+        "/add": (context) => const AddCredit(),
         "/info": (context) => const CreditInfo(),
         "/addPayment": (context) => AddPayment(),
+        "/schedule": (context) => CreditSchedule(),
+        "/history": (context) => const CreditHistory(),
+        "/editCredit": (context) => const EditCredit(),
+        "/settings": (context) => const Settings(),
       },
       theme: ThemeData(
         appBarTheme: AppBarTheme(

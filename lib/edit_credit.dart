@@ -2,39 +2,26 @@ import 'package:credit_calc/parameters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class AddCredit extends StatefulWidget {
-  const AddCredit({super.key});
+class EditCredit extends StatefulWidget {
+  const EditCredit({super.key});
 
   @override
-  State<AddCredit> createState() => _AddCreditState();
+  State<EditCredit> createState() => _EditCreditState();
 }
 
-class _AddCreditState extends State<AddCredit> {
+class _EditCreditState extends State<EditCredit> {
   int selectedType = 1;
 
-  Credit credit = Credit(
-    creditAmount: 0,
-    interestRate: 0,
-    creditPeriod: 0,
-    type: 1,
-    notaryServices: 0,
-    depositCost: 0,
-    date: "",
-    index: prefs.getStringList("credits") == null
-        ? 0
-        : prefs.getStringList("credits")!.length,
-  );
+  late Credit credit;
 
-  var dateController = TextEditingController();
-
-  var fields = [
-    "Credit amount",
-    "Interest rate",
-    "Credit period",
-    "Date",
-    "Notary services",
-    "Deposit cost",
-  ];
+  var fields = <String, TextEditingController>{
+    "Credit amount": TextEditingController(),
+    "Interest rate": TextEditingController(),
+    "Credit period": TextEditingController(),
+    "Date": TextEditingController(),
+    "Notary services": TextEditingController(),
+    "Deposit cost": TextEditingController(),
+  };
 
   var suffixes = {
     "Interest rate": "%",
@@ -51,11 +38,25 @@ class _AddCreditState extends State<AddCredit> {
     "Overpayment",
   ];
 
+  late Function(Credit) updateInfo;
+
   @override
-  void initState() {
-    dateController.text = formatDate(DateTime.now());
-    credit.date = dateController.text;
-    super.initState();
+  void didChangeDependencies() {
+    credit = (ModalRoute.of(context)!.settings.arguments
+        as Map<String, dynamic>)["credit"];
+
+    fields["Credit amount"]!.text = credit.creditAmount.toString();
+    fields["Interest rate"]!.text = credit.interestRate.toString();
+    fields["Credit period"]!.text = credit.creditPeriod.toString();
+    fields["Date"]!.text = credit.date;
+    fields["Notary services"]!.text = credit.notaryServices.toString();
+    fields["Deposit cost"]!.text = credit.depositCost.toString();
+
+    updateInfo = (ModalRoute.of(context)!.settings.arguments
+        as Map<String, dynamic>)["fun"];
+
+    selectedType = credit.type;
+    super.didChangeDependencies();
   }
 
   @override
@@ -69,11 +70,9 @@ class _AddCreditState extends State<AddCredit> {
             child: Center(
               child: InkWell(
                 onTap: () {
-                  var currentCredits = prefs.getStringList("credits") ?? [];
-
-                  currentCredits.add(credit.toString());
-
-                  prefs.setStringList("credits", currentCredits);
+                  credit.history = [];
+                  credit.save();
+                  updateInfo(credit);
                   updateHomeList();
                   Navigator.of(context).pop();
                 },
@@ -172,12 +171,12 @@ class _AddCreditState extends State<AddCredit> {
                             ],
                       ),
                     ),
-                    for (var i in fields)
+                    for (var i in fields.keys)
                       Container(
                         margin: const EdgeInsets.only(top: 20),
                         color: Colors.white,
                         child: TextField(
-                          controller: i == "Date" ? dateController : null,
+                          controller: fields[i],
                           onChanged: (value) {
                             setState(() {
                               switch (i) {
@@ -229,7 +228,8 @@ class _AddCreditState extends State<AddCredit> {
                                   ).then((value) {
                                     if (value != null) {
                                       setState(() {
-                                        dateController.text = formatDate(value);
+                                        fields["Date"]!.text =
+                                            formatDate(value);
                                         credit.date = formatDate(value);
                                       });
                                     }
@@ -245,7 +245,8 @@ class _AddCreditState extends State<AddCredit> {
                           ),
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
-                                RegExp(r'(^\d*\.?\d*)')),
+                              RegExp(r'(^\d*\.?\d*)'),
+                            ),
                           ],
                           decoration: InputDecoration(
                             hintText: i,

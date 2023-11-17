@@ -18,20 +18,33 @@ class _CreditInfoState extends State<CreditInfo> {
     "Overpayment",
   ];
 
-  late int index;
   double paid = 0;
+
+  void addPayment(Payment pay) {
+    setState(() {
+      credit.history.add(pay);
+      credit.save();
+
+      paid = 0;
+      for (var i in credit.history) {
+        paid += i.amount;
+      }
+    });
+  }
+
+  void updateInfo(Credit credit) {
+    setState(() {
+      this.credit = credit;
+    });
+  }
+
+  late Credit credit;
 
   @override
   Widget build(BuildContext context) {
-    index = (ModalRoute.of(context)!.settings.arguments
-        as Map<String, dynamic>)["index"];
-
-    var credit = Credit.fromJson(
-      json: jsonDecode(
-        prefs.getStringList("credits")![index],
-      ),
-    );
-
+    credit = (ModalRoute.of(context)!.settings.arguments
+        as Map<String, dynamic>)["credit"];
+    paid = 0;
     for (var i in credit.history) {
       paid += i.amount;
     }
@@ -48,217 +61,262 @@ class _CreditInfoState extends State<CreditInfo> {
           bottom: 20,
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(
-                  color: AppColors.secondTextColor,
-                ),
-              ),
-              padding: const EdgeInsets.symmetric(
-                vertical: 25,
-                horizontal: 15,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "${paid.toStringAsFixed(2)} \$",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Text(
-                        "${credit.totalPayment.toStringAsFixed(2)} \$",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  LinearProgressIndicator(
-                    value: paid / credit.totalPayment,
-                    minHeight: 5,
-                    color: AppColors.accentColor,
-                    backgroundColor: AppColors.secondTextColor,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Paid",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.thirdTextColor,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                      Text(
-                        "Debt",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.thirdTextColor,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            for (var i in outputs)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    Text(
-                      i,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: AppColors.thirdTextColor,
-                        fontWeight: FontWeight.w300,
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: AppColors.secondTextColor,
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 25,
+                        horizontal: 15,
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "${paid.toStringAsFixed(2)} \$",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Text(
+                                "${credit.fullCost.toStringAsFixed(2)} \$",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          LinearProgressIndicator(
+                            value: paid / credit.totalPayment,
+                            minHeight: 5,
+                            color: AppColors.accentColor,
+                            backgroundColor: AppColors.secondTextColor,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Paid",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.thirdTextColor,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              Text(
+                                "Debt",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.thirdTextColor,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
                       ),
                     ),
-                    Text(
-                      switch (i) {
-                        "Total payments" =>
-                          credit.totalPayment.toStringAsFixed(2),
-                        "Monthly payments" =>
-                          credit.monthlyPayment.toStringAsFixed(2),
-                        "Full cost of credit" =>
-                          credit.fullCost.toStringAsFixed(2),
-                        "Overpayment" => credit.overpayment.toStringAsFixed(2),
-                        _ => "",
-                      },
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
+                    const SizedBox(
+                      height: 30,
                     ),
+                    for (var i in outputs)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              i,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: AppColors.thirdTextColor,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                            Text(
+                              switch (i) {
+                                "Total payments" =>
+                                  credit.totalPayment.toStringAsFixed(2),
+                                "Monthly payments" =>
+                                  credit.monthlyPayment.toStringAsFixed(2),
+                                "Full cost of credit" =>
+                                  credit.fullCost.toStringAsFixed(2),
+                                "Overpayment" =>
+                                  credit.overpayment.toStringAsFixed(2),
+                                _ => "",
+                              },
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),
-            Spacer(),
-            InkWell(
-              onTap: () {
-                Navigator.pushNamed(context, "/addPayment", arguments: {
-                  "index": index,
-                });
-              },
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: AppColors.buttonColor,
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: const Center(
-                  child: Text(
-                    "Add payment",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
+            ),
+            // const Spacer(),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, "/addPayment", arguments: {
+                        "fun": addPayment,
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: AppColors.buttonColor,
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: const Center(
+                        child: Text(
+                          "Add payment",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: AppColors.mainTextColor,
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: const Center(
-                  child: Text(
-                    "Schedule",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, "/schedule", arguments: {
+                        "credit": credit,
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: AppColors.mainTextColor,
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: const Center(
+                        child: Text(
+                          "Schedule",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: AppColors.mainTextColor,
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: const Center(
-                  child: Text(
-                    "History",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, "/history", arguments: {
+                        "credit": credit,
+                        "fun": addPayment,
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: AppColors.mainTextColor,
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: const Center(
+                        child: Text(
+                          "History",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: AppColors.mainTextColor,
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: const Center(
-                  child: Text(
-                    "Edit",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, "/editCredit", arguments: {
+                        "credit": credit,
+                        "fun": updateInfo,
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: AppColors.mainTextColor,
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: const Center(
+                        child: Text(
+                          "Edit",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: AppColors.mainTextColor,
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: const Center(
-                  child: Text(
-                    "Delete",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: InkWell(
+                    onTap: () {
+                      var i = prefs.getStringList("credits") ?? [];
+                      i.removeAt(credit.index);
+
+                      prefs.setStringList("credits", i);
+                      updateHomeList();
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: AppColors.mainTextColor,
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: const Center(
+                        child: Text(
+                          "Delete",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
+              ],
+            )
           ],
         ),
       ),

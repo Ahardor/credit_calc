@@ -9,6 +9,10 @@ class AddPayment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Function(Payment pay) addPayment = (ModalRoute.of(context)!
+        .settings
+        .arguments as Map<String, dynamic>)["fun"];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -42,7 +46,24 @@ class AddPayment extends StatelessWidget {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                if (amountCtrl.text == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text(
+                      "Enter amount",
+                    ),
+                  ));
+                } else {
+                  var pay = Payment(
+                    amount: double.parse(amountCtrl.text),
+                    date: formatDateTime(DateTime.now()),
+                  );
+
+                  addPayment(pay);
+
+                  Navigator.of(context).pop();
+                }
+              },
               child: Container(
                 margin: const EdgeInsets.only(bottom: 5),
                 decoration: BoxDecoration(

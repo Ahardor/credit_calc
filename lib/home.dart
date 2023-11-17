@@ -12,12 +12,20 @@ class MainWidget extends StatefulWidget {
 }
 
 class _MainWidgetState extends State<MainWidget> {
-  var credits = [];
+  var credits = <Credit>[];
 
   void updateList() {
     setState(() {
+      // if (prefs.getStringList("credits") != null) {
+      //   for (var i = 0; i < prefs.getStringList("credits")!.length; i++) {
+      //     print(jsonDecode((prefs.getStringList("credits") ?? [])[i]));
+      //   }
+      // }
       credits = [
-        for (var i in prefs.getStringList("credits") ?? []) jsonDecode(i)
+        for (var i = 0; i < (prefs.getStringList("credits") ?? []).length; i++)
+          Credit.fromJson(
+              json: jsonDecode((prefs.getStringList("credits") ?? [])[i]),
+              index: i),
       ];
     });
   }
@@ -25,12 +33,12 @@ class _MainWidgetState extends State<MainWidget> {
   @override
   void initState() {
     updateHomeList = updateList;
+    updateList();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    updateList();
     return Scaffold(
       backgroundColor: AppColors.secondBgColor,
       appBar: AppBar(
@@ -42,7 +50,9 @@ class _MainWidgetState extends State<MainWidget> {
             )),
         actions: [
           InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).pushNamed("/settings");
+            },
             child: Image.asset(
               "assets/img/Settings.png",
               width: 30,
@@ -90,7 +100,7 @@ class _MainWidgetState extends State<MainWidget> {
                         //   Text(jsonEncode(credits[i])),
                         for (var i = 0; i < credits.length; i++)
                           CreditCard(
-                            index: i,
+                            credit: credits[i],
                           ),
                       ],
               ),
