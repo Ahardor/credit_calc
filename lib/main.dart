@@ -1,4 +1,6 @@
 import 'package:credit_calc/add_credit.dart';
+import 'package:credit_calc/add_payment.dart';
+import 'package:credit_calc/credit_info.dart';
 import 'package:credit_calc/home.dart';
 import 'package:credit_calc/parameters.dart';
 import 'package:credit_calc/start.dart';
@@ -30,11 +32,13 @@ class MainApp extends StatelessWidget {
         "/policy": (context) => const PolicyWidget(),
         "/main": (context) => const MainWidget(),
         "/add": (context) => const AddEditCredit(),
+        "/info": (context) => const CreditInfo(),
+        "/addPayment": (context) => AddPayment(),
       },
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.white,
-          foregroundColor: AppColors.buttonColor,
+          foregroundColor: AppColors.thirdTextColor,
           elevation: 0.4,
           toolbarHeight: 80,
           centerTitle: true,

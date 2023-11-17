@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:credit_calc/parameters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 
 class AddEditCredit extends StatefulWidget {
   const AddEditCredit({super.key});
@@ -14,26 +13,14 @@ class AddEditCredit extends StatefulWidget {
 class _AddEditCreditState extends State<AddEditCredit> {
   int selectedType = 1;
 
-  double creditAmount = 0,
-      interestRate = 0,
-      notaryServices = 0,
-      depositCost = 0;
-
-  int creditPeriod = 0;
-
-  void setPayments() {
-    var res = calcPayments(
-      interestRate: interestRate,
-      creditAmount: creditAmount,
-      creditPeriod: creditPeriod,
-      notaryServices: notaryServices,
-      depositCost: depositCost,
-    );
-
-    setState(() {
-      outputs = res;
-    });
-  }
+  Credit credit = Credit(
+      creditAmount: 0,
+      interestRate: 0,
+      creditPeriod: 0,
+      type: 1,
+      notaryServices: 0,
+      depositCost: 0,
+      date: "");
 
   var dateController = TextEditingController();
 
@@ -54,20 +41,17 @@ class _AddEditCreditState extends State<AddEditCredit> {
     "Deposit cost": r"$",
   };
 
-  var outputs = <String, double>{
-    "Total payments": 0,
-    "Monthly payments": 0,
-    "Full cost of credit": 0,
-    "Overpayment": 0,
-  };
-
-  String formatDate(DateTime dt) {
-    return DateFormat("dd.MM.yyyy").format(dt);
-  }
+  var outputs = [
+    "Total payments",
+    "Monthly payments",
+    "Full cost of credit",
+    "Overpayment",
+  ];
 
   @override
   void initState() {
     dateController.text = formatDate(DateTime.now());
+    credit.date = dateController.text;
     super.initState();
   }
 
@@ -82,20 +66,9 @@ class _AddEditCreditState extends State<AddEditCredit> {
             child: Center(
               child: InkWell(
                 onTap: () {
-                  var creditData = {
-                    "Type": selectedType,
-                    "Credit amount": creditAmount,
-                    "Interest rate": interestRate,
-                    "Credit period": creditPeriod,
-                    "Date": dateController.text,
-                    "Notary services": notaryServices,
-                    "Deposit cost": depositCost,
-                    "History": [],
-                  };
-
                   var currentCredits = prefs.getStringList("credits") ?? [];
 
-                  currentCredits.add(jsonEncode(creditData));
+                  currentCredits.add(credit.toString());
 
                   prefs.setStringList("credits", currentCredits);
                   updateHomeList();
@@ -137,6 +110,7 @@ class _AddEditCreditState extends State<AddEditCredit> {
                                 onTap: () {
                                   setState(() {
                                     selectedType = index;
+                                    credit.type = index;
                                   });
                                 },
                                 child: Padding(
@@ -204,23 +178,23 @@ class _AddEditCreditState extends State<AddEditCredit> {
                             setState(() {
                               switch (i) {
                                 case "Credit amount":
-                                  creditAmount =
+                                  credit.creditAmount =
                                       value == "" ? 0 : double.parse(value);
                                   break;
                                 case "Interest rate":
-                                  interestRate =
+                                  credit.interestRate =
                                       value == "" ? 0 : double.parse(value);
                                   break;
                                 case "Credit period":
-                                  creditPeriod =
+                                  credit.creditPeriod =
                                       value == "" ? 0 : int.parse(value);
                                   break;
                                 case "Notary services":
-                                  notaryServices =
+                                  credit.notaryServices =
                                       value == "" ? 0 : double.parse(value);
                                   break;
                                 case "Deposit cost":
-                                  depositCost =
+                                  credit.depositCost =
                                       value == "" ? 0 : double.parse(value);
                                   break;
                                 default:
@@ -228,7 +202,7 @@ class _AddEditCreditState extends State<AddEditCredit> {
                               }
                             });
 
-                            setPayments();
+                            credit.countPayments();
                           },
                           keyboardType: TextInputType.number,
                           readOnly: i == "Date",
@@ -252,6 +226,7 @@ class _AddEditCreditState extends State<AddEditCredit> {
                                     if (value != null) {
                                       setState(() {
                                         dateController.text = formatDate(value);
+                                        credit.date = formatDate(value);
                                       });
                                     }
                                   });
@@ -291,7 +266,7 @@ class _AddEditCreditState extends State<AddEditCredit> {
                 crossAxisSpacing: 15,
                 childAspectRatio: 2.2,
                 children: [
-                  for (var i in outputs.keys)
+                  for (var i in outputs)
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -311,7 +286,17 @@ class _AddEditCreditState extends State<AddEditCredit> {
                             ),
                           ),
                           Text(
-                            "${outputs[i]!.toStringAsFixed(2)} \$",
+                            switch (i) {
+                              "Total payments" =>
+                                credit.totalPayment.toStringAsFixed(2),
+                              "Monthly payments" =>
+                                credit.monthlyPayment.toStringAsFixed(2),
+                              "Full cost of credit" =>
+                                credit.fullCost.toStringAsFixed(2),
+                              "Overpayment" =>
+                                credit.overpayment.toStringAsFixed(2),
+                              _ => "",
+                            },
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w900,

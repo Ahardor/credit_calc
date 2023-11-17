@@ -11,85 +11,88 @@ class CreditCard extends StatelessWidget {
 
   final index;
 
-  var creditData = {};
-  var paid = 0;
-  var creditCalcs = {};
+  double paid = 0;
+  late Credit credit;
 
   @override
   Widget build(BuildContext context) {
-    creditData = jsonDecode(prefs.getStringList("credits")![index]);
-    creditCalcs = calcPayments(
-      interestRate: creditData["Interest rate"],
-      creditAmount: creditData["Credit amount"],
-      creditPeriod: creditData["Credit period"],
-      notaryServices: creditData["Notary services"],
-      depositCost: creditData["Deposit cost"],
-    );
-    paid = creditData["History"].length != 0
-        ? creditData["History"].reduce((a, b) => a + b)
-        : 0;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.only(left: 15, top: 20, bottom: 20, right: 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: AppColors.secondTextColor,
+    var creditData = jsonDecode(prefs.getStringList("credits")![index]);
+    credit = Credit.fromJson(json: creditData);
+
+    for (var i in credit.history) {
+      paid += i.amount;
+    }
+
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(context, "/info", arguments: {
+          "index": index,
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding:
+            const EdgeInsets.only(left: 15, top: 20, bottom: 20, right: 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: AppColors.secondTextColor,
+          ),
         ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              color: AppColors.buttonColor,
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                color: AppColors.buttonColor,
+              ),
+              child: Image.asset(
+                "assets/img/${CreditType[creditData["type"]]}.png",
+                width: 35,
+              ),
             ),
-            child: Image.asset(
-              "assets/img/${CreditType[creditData["Type"]]}.png",
-              width: 35,
+            const SizedBox(
+              width: 20,
             ),
-          ),
-          const SizedBox(
-            width: 20,
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "My credit",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+            Expanded(
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "My credit",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "Paid $paid \$ out of ${creditCalcs["Total payments"]!.toStringAsFixed(2)} \$",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.thirdTextColor,
-                        fontWeight: FontWeight.w400,
+                      Text(
+                        "Paid $paid \$ out of ${credit.totalPayment.toStringAsFixed(2)} \$",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.thirdTextColor,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: LinearProgressIndicator(
-                    value: paid / creditCalcs["Total payments"],
-                    minHeight: 5,
-                    color: AppColors.accentColor,
-                    backgroundColor: AppColors.secondTextColor,
+                    ],
                   ),
-                )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: LinearProgressIndicator(
+                      value: paid / credit.totalPayment,
+                      minHeight: 5,
+                      color: AppColors.accentColor,
+                      backgroundColor: AppColors.secondTextColor,
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

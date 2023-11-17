@@ -3,6 +3,7 @@ library parameters;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 late final SharedPreferences prefs;
@@ -11,6 +12,7 @@ class AppColors {
   static var darkColor = const Color(0xFF1C1C1E);
   static var buttonColor = const Color(0xFFFF3B30);
   static var textColor = const Color(0xFFFFFFFF);
+  static var mainTextColor = const Color(0xFFDEDEDE);
   static var secondTextColor = const Color(0xFFC7C7CC);
   static var thirdTextColor = const Color(0xFF858585);
   static var secondBgColor = const Color(0xFFFcFcFc);
@@ -21,44 +23,91 @@ Function updateHomeList = () {};
 
 const CreditType = ["Vehicle", "Personal", "Home"];
 
-Map<String, double> calcPayments({
-  double interestRate = 0,
-  double creditAmount = 0,
-  int creditPeriod = 0,
-  double notaryServices = 0,
-  double depositCost = 0,
-}) {
-  var monthlyRate = (interestRate / 100) / 12;
-  var result = <String, double>{};
-
-  result["Monthly payments"] = interestRate == 0
-      ? creditAmount / creditPeriod
-      : creditAmount *
-          (monthlyRate +
-              monthlyRate / (pow((1 + monthlyRate), creditPeriod) - 1));
-  result["Total payments"] = result["Monthly payments"]! * creditPeriod;
-  result["Full cost of credit"] =
-      result["Monthly payments"]! + notaryServices + depositCost;
-  result["Overpayment"] = result["Total payments"]! - creditAmount;
-
-  return result;
+String formatDate(DateTime dt) {
+  return DateFormat("dd.MM.yyyy").format(dt);
 }
 
 class Credit {
   Credit({
-    this.creditAmount = 0,
-    this.interestRate = 0,
-    this.creditPeriod = 0,
-    this.notaryServices = 0,
-    this.depositCost = 0,
+    required this.creditAmount,
+    required this.interestRate,
+    required this.creditPeriod,
+    required this.notaryServices,
+    required this.depositCost,
     this.history = const [],
-    this.type = 0,
+    required this.type,
+    required this.date,
+  }) {
+    countPayments();
+  }
+
+  Credit.fromJson({
+    required Map<String, dynamic> json,
+  }) {
+    creditAmount = json["creditAmount"];
+    interestRate = json["interestRate"];
+    creditPeriod = json["creditPeriod"];
+    notaryServices = json["notaryServices"];
+    depositCost = json["depositCost"];
+    type = json["type"];
+    date = json["date"];
+    history = [for (var i in json["history"]) Payment.fromJson(json: i)];
+
+    countPayments();
+  }
+
+  void countPayments() {
+    var monthlyRate = (interestRate / 100) / 12;
+
+    monthlyPayment = interestRate == 0
+        ? creditAmount / creditPeriod
+        : creditAmount *
+            (monthlyRate +
+                monthlyRate / (pow((1 + monthlyRate), creditPeriod) - 1));
+    totalPayment = monthlyPayment * creditPeriod;
+    fullCost = totalPayment + notaryServices + depositCost;
+    overpayment = totalPayment - creditAmount;
+  }
+
+  late int type;
+  late double interestRate;
+  late double creditAmount;
+  late int creditPeriod;
+  late double notaryServices;
+  late double depositCost;
+  late String date;
+
+  late List<Payment> history;
+
+  late double monthlyPayment;
+  late double totalPayment;
+  late double fullCost;
+  late double overpayment;
+
+  @override
+  String toString() {
+    return '{"type": $type, "interestRate": $interestRate, "date": "$date", "creditAmount": $creditAmount, "creditPeriod": $creditPeriod, "notaryServices": $notaryServices, "depositCost": $depositCost, "history": $history}';
+  }
+}
+
+class Payment {
+  Payment({
+    this.amount = 0,
+    this.date = "",
   });
-  int type;
-  double interestRate;
-  double creditAmount;
-  int creditPeriod;
-  double notaryServices;
-  double depositCost;
-  List<double> history;
+
+  Payment.fromJson({
+    required Map<String, dynamic> json,
+  }) {
+    amount = json["amount"];
+    date = json["date"];
+  }
+
+  late double amount;
+  late String date;
+
+  @override
+  String toString() {
+    return '"amount": $amount, "date": $date';
+  }
 }

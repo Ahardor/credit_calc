@@ -86,6 +86,8 @@ class _MainWidgetState extends State<MainWidget> {
                         ),
                       ]
                     : [
+                        // for (var i = 0; i < credits.length; i++)
+                        //   Text(jsonEncode(credits[i])),
                         for (var i = 0; i < credits.length; i++)
                           CreditCard(
                             index: i,
