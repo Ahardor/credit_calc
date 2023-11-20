@@ -86,14 +86,11 @@ class _HomeWidgetState extends State<HomeWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: credits.isEmpty
-                      ? MainAxisAlignment.center
-                      : MainAxisAlignment.start,
-                  children: credits.isEmpty // Если нет кредитов
-                      ? <Widget>[
+              child: credits.isEmpty
+                  ? Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
                           const Text(
                             "It's empty",
                             style: TextStyle(
@@ -111,16 +108,20 @@ class _HomeWidgetState extends State<HomeWidget> {
                               color: AppColors.secondTextColor,
                             ),
                           ),
-                        ]
-                      : [
+                        ])
+                  : SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
                           // Если есть кредиты
                           for (var i = 0; i < credits.length; i++)
                             CreditCard(
                               credit: credits[i],
                             ),
                         ],
-                ),
-              ),
+                      ),
+                    ),
             ),
             InkWell(
               onTap: () {

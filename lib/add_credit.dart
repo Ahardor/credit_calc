@@ -270,53 +270,56 @@ class _AddCreditState extends State<AddCredit> {
             const SizedBox(
               height: 20,
             ),
-            GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
-                childAspectRatio: 2.2,
-                children: [
-                  for (var i in outputs)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(2),
-                        border: Border.all(
-                          color: AppColors.secondTextColor,
+            Container(
+              constraints: BoxConstraints(maxWidth: 500),
+              child: GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 15,
+                  childAspectRatio: 2.2,
+                  children: [
+                    for (var i in outputs)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(2),
+                          border: Border.all(
+                            color: AppColors.secondTextColor,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              i,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColors.secondTextColor,
+                              ),
+                            ),
+                            Text(
+                              switch (i) {
+                                "Total payments" =>
+                                  credit.totalPayment.toStringAsFixed(2),
+                                "Monthly payments" =>
+                                  credit.monthlyPayment.toStringAsFixed(2),
+                                "Full cost of credit" =>
+                                  credit.fullCost.toStringAsFixed(2),
+                                "Overpayment" =>
+                                  credit.overpayment.toStringAsFixed(2),
+                                _ => "",
+                              },
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            i,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.secondTextColor,
-                            ),
-                          ),
-                          Text(
-                            switch (i) {
-                              "Total payments" =>
-                                credit.totalPayment.toStringAsFixed(2),
-                              "Monthly payments" =>
-                                credit.monthlyPayment.toStringAsFixed(2),
-                              "Full cost of credit" =>
-                                credit.fullCost.toStringAsFixed(2),
-                              "Overpayment" =>
-                                credit.overpayment.toStringAsFixed(2),
-                              _ => "",
-                            },
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ]),
+                  ]),
+            ),
             const SizedBox(
               height: 30,
             ),

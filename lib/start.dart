@@ -36,20 +36,38 @@ class _StartWidgetState extends State<StartWidget> {
         children: [
           ImagePixels.container(
             imageProvider: startImage,
-            child: Container(
-              constraints: const BoxConstraints(maxHeight: 600),
-              color: Colors.white,
-              width: double.infinity,
-              child: AspectRatio(
-                aspectRatio: 0.87,
-                child: Align(
+            child: AspectRatio(
+              aspectRatio: 0.98,
+              child: Container(
+                constraints: const BoxConstraints(maxHeight: 500),
+                color: Colors.white,
+                width: double.infinity,
+                child: Stack(
                   alignment: Alignment.bottomCenter,
-                  child: Image(
-                    image: startImage,
-                  ),
+                  children: [
+                    Image(
+                      image: startImage,
+                    ),
+                    Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0x00000000),
+                            Color(0x00000000),
+                            Color(0xFF212121),
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
+          ),
+          Container(
+            color: Colors.amber,
           ),
           SizedBox(
             child: Column(
