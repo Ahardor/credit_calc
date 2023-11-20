@@ -1,5 +1,6 @@
 import 'package:credit_calc/parameters.dart';
 import 'package:flutter/material.dart';
+import 'package:image_pixels/image_pixels.dart';
 
 class StartWidget extends StatefulWidget {
   const StartWidget({super.key});
@@ -9,7 +10,7 @@ class StartWidget extends StatefulWidget {
 }
 
 class _StartWidgetState extends State<StartWidget> {
-  int currentIndex = 1;
+  int currentIndex = 0;
 
   // Массив заголовков
   final heads = [
@@ -27,22 +28,25 @@ class _StartWidgetState extends State<StartWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var startImage = AssetImage("assets/img/Start$currentIndex.jpg");
     return Scaffold(
       backgroundColor: AppColors.darkColor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            constraints: const BoxConstraints(maxHeight: 600),
-            color: Colors.white,
-            width: double.infinity,
-            child: AspectRatio(
-              aspectRatio: 0.87,
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Image.asset(
-                  "assets/img/Start$currentIndex.png", // Изображение в зависимости от текущего экрана
-                  // height: 600,
+          ImagePixels.container(
+            imageProvider: startImage,
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 600),
+              color: Colors.white,
+              width: double.infinity,
+              child: AspectRatio(
+                aspectRatio: 0.87,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Image(
+                    image: startImage,
+                  ),
                 ),
               ),
             ),
@@ -51,7 +55,7 @@ class _StartWidgetState extends State<StartWidget> {
             child: Column(
               children: [
                 Text(
-                  heads[currentIndex - 1],
+                  heads[currentIndex],
                   style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w800,
@@ -65,7 +69,7 @@ class _StartWidgetState extends State<StartWidget> {
                     horizontal: 20.0,
                   ),
                   child: Text(
-                    desc[currentIndex - 1],
+                    desc[currentIndex],
                     style: TextStyle(
                         color: AppColors.secondTextColor,
                         fontWeight: FontWeight.w500,
@@ -84,7 +88,7 @@ class _StartWidgetState extends State<StartWidget> {
                   child: InkWell(
                     onTap: () {
                       setState(() {
-                        if (currentIndex < 3) {
+                        if (currentIndex < 2) {
                           currentIndex++; // Переход к следующему экрану
                         } else {
                           prefs.setBool("start", true);
@@ -131,7 +135,7 @@ class _StartWidgetState extends State<StartWidget> {
                       height: 5,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: currentIndex > 1
+                        color: currentIndex > 0
                             ? AppColors.buttonColor
                             : Colors.white,
                       ),
@@ -144,7 +148,7 @@ class _StartWidgetState extends State<StartWidget> {
                       height: 5,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: currentIndex > 2
+                        color: currentIndex > 1
                             ? AppColors.buttonColor
                             : Colors.white,
                       ),

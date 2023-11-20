@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:credit_calc/credit_card.dart';
 import 'package:credit_calc/parameters.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 class HomeWidget extends StatefulWidget {
   // Главная страница
@@ -14,6 +15,7 @@ class HomeWidget extends StatefulWidget {
 
 class _HomeWidgetState extends State<HomeWidget> {
   var credits = <Credit>[];
+  final InAppReview inAppReview = InAppReview.instance;
 
   void updateList() {
     setState(() {
@@ -31,7 +33,23 @@ class _HomeWidgetState extends State<HomeWidget> {
   void initState() {
     updateHomeList = updateList; // Создание глобальной функции для обновления
     updateList();
+    if (prefs.getBool("review") == null || !prefs.getBool("review")!) {
+      print("Has not reviewed yet");
+      callReview();
+      prefs.setBool("review", true);
+    } else {
+      print("Has already reviewed");
+    }
     super.initState();
+  }
+
+  void callReview() async {
+    if (await inAppReview.isAvailable()) {
+      print("Calling review");
+      inAppReview.requestReview();
+    } else {
+      print("Review not available");
+    }
   }
 
   @override
@@ -63,43 +81,45 @@ class _HomeWidgetState extends State<HomeWidget> {
       ),
       body: Padding(
         padding:
-            const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+            const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: credits.isEmpty
-                    ? MainAxisAlignment.center
-                    : MainAxisAlignment.start,
-                children: credits.isEmpty // Если нет кредитов
-                    ? <Widget>[
-                        const Text(
-                          "It's empty",
-                          style: TextStyle(
-                              fontSize: 25, fontWeight: FontWeight.w800),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          'Add information about your mortgage by clicking the '
-                          '"Add credit info" button',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: AppColors.secondTextColor,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: credits.isEmpty
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.start,
+                  children: credits.isEmpty // Если нет кредитов
+                      ? <Widget>[
+                          const Text(
+                            "It's empty",
+                            style: TextStyle(
+                                fontSize: 25, fontWeight: FontWeight.w800),
                           ),
-                        ),
-                      ]
-                    : [
-                        // Если есть кредиты
-                        for (var i = 0; i < credits.length; i++)
-                          CreditCard(
-                            credit: credits[i],
+                          const SizedBox(
+                            height: 20,
                           ),
-                      ],
+                          Text(
+                            'Add information about your mortgage by clicking the '
+                            '"Add credit info" button',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: AppColors.secondTextColor,
+                            ),
+                          ),
+                        ]
+                      : [
+                          // Если есть кредиты
+                          for (var i = 0; i < credits.length; i++)
+                            CreditCard(
+                              credit: credits[i],
+                            ),
+                        ],
+                ),
               ),
             ),
             InkWell(
@@ -111,7 +131,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 height: 70,
                 decoration: BoxDecoration(
                     color: AppColors.buttonColor,
-                    borderRadius: BorderRadius.circular(5)),
+                    borderRadius: BorderRadius.circular(15)),
                 child: const Center(
                   child: Text(
                     "Add credit info",
